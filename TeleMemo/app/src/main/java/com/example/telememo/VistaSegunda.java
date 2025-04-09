@@ -49,7 +49,8 @@ public class VistaSegunda extends AppCompatActivity {
         Collections.shuffle(palabras);
         for (String palabra : palabras) {
             Button btn = new Button(this);
-            btn.setText(palabra);
+            btn.setTag(palabra);
+            btn.setText("");
             btn.setTextColor(Color.BLACK);
             btn.setOnClickListener(v -> manejarClick(btn));
             gridLayout.addView(btn);
@@ -58,14 +59,24 @@ public class VistaSegunda extends AppCompatActivity {
     }
 
     private void manejarClick(Button btn) {
-        String texto = btn.getText().toString();
+        String texto = (String)btn.getTag();
+        btn.setText(texto);
         oracioningresada.add(texto);
 
         int idx = oracioningresada.size() - 1;
         if (idx >= oracion.size() || !oracion.get(idx).equals(texto)) {
             intentos++;
-            oracioningresada.clear();
+            //oracioningresada.clear();
             Toast.makeText(this, "Incorrecto. Intentos: " + intentos + "/3", Toast.LENGTH_SHORT).show();
+            new android.os.Handler().postDelayed(() -> {
+                for (int i=0;i< gridLayout.getChildCount();i++){
+                    Button b = (Button) gridLayout.getChildAt(i);
+                    if (!oracioningresada.contains(b.getTag())) {
+                        b.setText(""); // ocultar de nuevo
+                    }
+                }
+                oracioningresada.clear();
+            }, 2000);
             if (intentos >= 3) finalizarJuego(false);
         } else if (oracioningresada.size() == oracion.size()) {
             finalizarJuego(true);
@@ -100,7 +111,7 @@ public class VistaSegunda extends AppCompatActivity {
         });
         String[] seleccion = oraciones.get(tematica);
         String seleccionRealizada = seleccion[new Random().nextInt(seleccion.length)];
-        return Arrays.asList(seleccionRealizada.split(""));
+        return Arrays.asList(seleccionRealizada.split(" "));
     }
 
 
