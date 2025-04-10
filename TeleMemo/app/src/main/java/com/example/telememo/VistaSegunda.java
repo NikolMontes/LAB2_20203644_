@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+/*Parte del codigo ha sido parcialmente obtenido usando IA (chatGPT), especialmente para facilitar la estructura de los métodos
+y para la separación de las oraciones en palabras, así como organizarlas en las tarjetas aleatoriamente*/
 
 public class VistaSegunda extends AppCompatActivity {
     GridLayout gridLayout;
@@ -44,18 +46,22 @@ public class VistaSegunda extends AppCompatActivity {
 
         String tema = getIntent().getStringExtra("tematica");
         oracion = fraseAleatoria(tema);
+        Collections.shuffle(oracion);
 
-        List<String> palabras = new ArrayList<>(oracion);
-        Collections.shuffle(palabras);
-        for (String palabra : palabras) {
+        for (int i = 0; i < 12; i++) {
             Button btn = new Button(this);
-            btn.setTag(palabra);
             btn.setText("");
-            btn.setTextColor(Color.BLACK);
-            btn.setOnClickListener(v -> manejarClick(btn));
             gridLayout.addView(btn);
         }
-        inicio = SystemClock.elapsedRealtime();
+        String oracionencontrada = String.join(" ", oracion);
+
+        findViewById(R.id.btn_jugar).setOnClickListener(v -> {
+            Intent intent = new Intent(this, VistaResultado.class);
+            intent.putExtra("tematica", tema);
+            intent.putExtra("oracion", oracionencontrada);
+            startActivity(intent);
+        });
+
     }
 
     private void manejarClick(Button btn) {
@@ -72,7 +78,7 @@ public class VistaSegunda extends AppCompatActivity {
                 for (int i=0;i< gridLayout.getChildCount();i++){
                     Button b = (Button) gridLayout.getChildAt(i);
                     if (!oracioningresada.contains(b.getTag())) {
-                        b.setText(""); // ocultar de nuevo
+                        b.setText("");
                     }
                 }
                 oracioningresada.clear();
@@ -110,6 +116,7 @@ public class VistaSegunda extends AppCompatActivity {
                 "Los amplificadores EDFA mejoran la señal óptica en redes de larga distancia"
         });
         String[] seleccion = oraciones.get(tematica);
+        //String seleccionRealizada  = seleccion[1];
         String seleccionRealizada = seleccion[new Random().nextInt(seleccion.length)];
         return Arrays.asList(seleccionRealizada.split(" "));
     }
